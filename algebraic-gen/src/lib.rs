@@ -53,10 +53,8 @@ pub fn generate_geometric_product(input: TokenStream) -> TokenStream {
     let product: ExprArray = syn::parse(product_stream).unwrap();
 
     let gen = quote! {
-        pub fn #function_ident<A, B, E>(a: &A, b: &B) -> [E; #array_length]
+        pub fn #function_ident<E>(a: &[E; #array_length], b: &[E; #array_length]) -> [E; #array_length]
         where
-            A: Index<usize, Output = E>,
-            B: Index<usize, Output = E>,
             E: Copy + Mul<E, Output = E> + Add<E, Output = E> + Sub<E, Output = E>,
         {
             #product
