@@ -1,14 +1,10 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+use algebraic_gen::generate_geometric_product;
+use std::ops::{Add, Index, Mul, Sub};
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+generate_geometric_product!(0);
+generate_geometric_product!(1);
+generate_geometric_product!(2);
+generate_geometric_product!(3);
+generate_geometric_product!(4);
+generate_geometric_product!(5);
+generate_geometric_product!(6);
