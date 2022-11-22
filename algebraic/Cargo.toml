@@ -12,3 +12,4 @@ algebraic-gen = { path = "../algebraic-gen" }
 generic-tests = "0.1.2"
 rand_core = "0.6.4"
 rand_chacha = "0.3.1"
+itertools = "0.10.5"
