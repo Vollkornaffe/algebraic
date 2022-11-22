@@ -9,11 +9,15 @@ generate_geometric_product!(4);
 generate_geometric_product!(5);
 generate_geometric_product!(6);
 
+mod trait_for_arrays;
+
 #[cfg(test)]
 #[generic_tests::define]
 mod tests {
+    use super::*;
     use rand_chacha::{rand_core::SeedableRng, ChaCha8Rng};
     use rand_core::RngCore;
+    use trait_for_arrays::GeometricProduct;
 
     fn log_2(n: usize) -> usize {
         assert!(n.is_power_of_two());
@@ -28,65 +32,84 @@ mod tests {
         rng.next_u64() as f64 / std::u64::MAX as f64 * 20.0 - 10.0
     }
 
-    fn random_vector<const N: usize>(rng: &mut ChaCha8Rng) -> [f64; N] {
-        let mut v = [0.0; N];
-        for i in (0..log_2(N)).map(|d| 1 << d) {
+    fn random_vector<T: GeometricProduct<f64>>(rng: &mut ChaCha8Rng) -> T {
+        let mut v = T::default();
+        for i in (0..log_2(T::N)).map(|d| 1 << d) {
             v[i] = random_float(rng);
         }
         v
     }
 
-    fn random_multi_vector<const N: usize>(rng: &mut ChaCha8Rng) -> [f64; N] {
-        let mut mv = [0.0; N];
-        for i in 0..N {
+    fn random_multi_vector<T: GeometricProduct<f64>>(rng: &mut ChaCha8Rng) -> T {
+        let mut mv = T::default();
+        for i in 0..T::N {
             mv[i] = random_float(rng);
         }
         mv
     }
 
-    fn scale<const N: usize>(a: &[f64; N], s: f64) -> [f64; N] {
+    const SAMPLES: usize = 100;
+    fn random_samples<T: GeometricProduct<f64>>(rng: &mut ChaCha8Rng) -> Vec<T> {
+        (0..SAMPLES).map(|_| random_multi_vector(rng)).collect()
+    }
+
+    fn scale<T: GeometricProduct<f64>>(a: T, s: f64) -> T {
         let mut b = a.clone();
-        for i in 0..N {
+        for i in 0..T::N {
             b[i] *= s;
         }
         b
     }
 
-    fn add<const N: usize>(a: &[f64; N], b: &[f64; N]) -> [f64; N] {
+    fn add<T: GeometricProduct<f64>>(a: T, b: T) -> T {
         let mut c = a.clone();
-        for i in 0..N {
+        for i in 0..T::N {
             c[i] += b[i];
         }
         c
     }
 
-    fn sub<const N: usize>(a: &[f64; N], b: &[f64; N]) -> [f64; N] {
+    fn sub<T: GeometricProduct<f64>>(a: T, b: T) -> T {
         let mut c = a.clone();
-        for i in 0..N {
+        for i in 0..T::N {
             c[i] -= b[i];
         }
         c
     }
 
-    fn approx<const N: usize>(a: &[f64; N], b: &[f64; N]) -> bool {
-        a.iter().zip(b.iter()).all(|(a, b)| (a - b).abs() < 0.0001)
+    fn approx<T: GeometricProduct<f64>>(a: T, b: T) -> bool {
+        a.into_iter()
+            .zip(b.into_iter())
+            .all(|(a, b)| (a - b).abs() < 0.0001)
     }
 
+    // ab == (ab + ba) / 2 + (ab - ba) / 2
     #[test]
-    fn antisymmetry<const N: usize>() {}
+    fn antisymmetry<T: GeometricProduct<f64>>() {
+        let samples: Vec<T> = random_samples(&mut setup_rng());
+        for i in 0..SAMPLES / 2 {
+            let a = &samples[i];
+            let b = &samples[i + SAMPLES / 2];
+            let ab = T::geometric_product(a, b);
+            let ba = T::geometric_product(b, a);
 
-    #[instantiate_tests(<1>)]
+            assert!(approx(
+                ab,
+                add(scale(add(ab, ba), 0.5), scale(sub(ab, ba), 0.5),)
+            ));
+        }
+    }
+
+    #[instantiate_tests(<[f64;1]>)]
     mod d0 {}
-    #[instantiate_tests(<2>)]
+    #[instantiate_tests(<[f64;2]>)]
     mod d1 {}
-    #[instantiate_tests(<4>)]
+    #[instantiate_tests(<[f64;4]>)]
     mod d2 {}
-    #[instantiate_tests(<8>)]
+    #[instantiate_tests(<[f64;8]>)]
     mod d3 {}
-    #[instantiate_tests(<16>)]
+    #[instantiate_tests(<[f64;16]>)]
     mod d4 {}
-    #[instantiate_tests(<32>)]
+    #[instantiate_tests(<[f64;32]>)]
     mod d5 {}
-    #[instantiate_tests(<64>)]
-    mod d6 {}
 }
