@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 algebraic-gen = { path = "../algebraic-gen" }
+
+[dev-dependencies]
+generic-tests = "0.1.2"
