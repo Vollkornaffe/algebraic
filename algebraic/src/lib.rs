@@ -1,5 +1,5 @@
 use algebraic_gen::generate_geometric_product;
-pub use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, Mul, Sub};
 
 generate_geometric_product!(0);
 generate_geometric_product!(1);
