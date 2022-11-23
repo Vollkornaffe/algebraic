@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-algebraic-gen = { path = "../algebraic-gen" }
+algebraic-gen = { version = "0.1.0", path = "../algebraic-gen" }
 
 [dev-dependencies]
 generic-tests = "0.1.2"
