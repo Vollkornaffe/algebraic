@@ -1,3 +1,33 @@
+//! Proc macro crate for [algebraic](https://crates.io/crates/algebraic)
+//!
+//! Maybe there is better way to get the products that doesn't use the \'sledgehammer\' proc macro
+//! approach.
+//! The generation is not performant, but we're talking build time.
+//!
+//! Definitely inspired by [All Hail Geometric Algebra!](https://crypto.stanford.edu/~blynn/haskell/ga.html)
+//!
+//! Brief description of the how the macro works:
+//! * Generates elements (base)
+//!   * Product is simple concatination here
+//!   * Canonization with Bubblesort & a kind of duplication elimination
+//! * Generates product sums
+//!   * Expand terms
+//!   * More products & canonization
+//!   * Adding/Subtracting based on sign returned by canonization
+//! * A bit of formatting
+//!
+//! More details in the source code: [algebra_generation.rs](https://github.com/Vollkornaffe/algebraic/blob/main/algebraic-gen/src/algebra_generation.rs).
+//!
+//! # Examples
+//!
+//! Pass a (small) positive integer to the macro and it generates the product function.
+//!
+//! ```
+//! use algebraic_gen::generate_geometric_product;
+//! use std::ops::{Add, Mul, Sub};
+//!
+//! generate_geometric_product!(3);
+//! ```
 mod algebra_generation;
 use algebra_generation::{generate_elements, generate_product_sums};
 use core::str::FromStr;
@@ -57,6 +87,7 @@ fn generate_base_string(elements: &[Vec<usize>]) -> String {
     )
 }
 
+/// The one macro exported by this crate
 #[proc_macro]
 pub fn generate_geometric_product(input: TokenStream) -> TokenStream {
     let lit: syn::LitInt = syn::parse(input).unwrap();
@@ -77,14 +108,11 @@ pub fn generate_geometric_product(input: TokenStream) -> TokenStream {
     let product: ExprArray = syn::parse(product_stream).unwrap();
 
     let basis = generate_base_string(&elements);
+    let dimension = format!("{}", dimension);
     let documentation = format!(
-        "```{function_ident}``` calculates the geometric product of two multivectors (aka. Clifford
-        numbers or k-blades) from a geometric algebra of {}-dimensional space. The arguments and
-        return value are coefficient representations (```[T; {}]```) of the multivectors. ```T```
-        is meant to be a floating point type. The coefficients map to the ```2^{}``` orthogonal
-        basis elements which are listed below. The integers in the \'Outer Product\' column
-        represent different unit vectors and their wedge product. ",
-        dimension, array_length, dimension
+        "Calculates the geometric product for multivectors of {dimension}-dimensional space.
+        The arrays are coefficients for the following {} basis elements.",
+        array_length
     );
 
     let gen = quote! {

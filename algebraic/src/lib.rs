@@ -1,5 +1,5 @@
-//! Uses [algebraic-gen](https://crates.io/crates/algebraic-gen) to generate geometric products for
-//! up to 6 dimensions of space.
+//! Uses [algebraic_gen](https://crates.io/crates/algebraic-gen) to generate performant
+//! geometric products for up to 6 dimensions of space.
 //!
 //! The products are free functions with (pseudo) signature
 //!
@@ -26,10 +26,12 @@
 //!
 //! # Geometric Algebra
 //!
+//! <https://en.wikipedia.org/wiki/Geometric_algebra>
+//!
 //! A geometric algebra is always defined wrt. a given dimension ```D``` of space. In such an
 //! algebra there exist different objects. For one there are a ```D``` orthogonal unit vectors
 //! (X,Y,Z in 3D). But there are also other, more exotic objects like *Bivectors*.
-//! However no matter how different, any number and all types of objects within a geometric
+//! However, no matter how exotic, any number and all types of objects within a geometric
 //! algebra can be scaled and added to form a *Multivector* which is then also the most general
 //! type of object.
 //!
@@ -43,6 +45,9 @@
 //!
 //! # Choice of Base
 //!
+//! The documentation of the choice of base is attached to the respective product.
+//! For details regarding the generation, please have a look at the generating crate.
+//!
 //! Sticking to 3D for example, this is the choice of base in this crate:
 //!
 //! 1 Scalar (```S```), 3 Vectors (```X```, ```Y```, ```Z```), 3 Bivectors (```X∧Y```, ```X∧Z```, ```Y∧X```), and 1 Pseudoscalar (```X∧Y∧Z```)
@@ -54,11 +59,6 @@
 //! or, as in the documentation attached to the respective product
 //!
 //! ```[[], [0], [1], [0,1], [2], [0,2], [1,2], [0,1,2]]```
-//!
-//! More general, the rules for generation/ordering are
-//! * Start with scalar and generate the other objects peu à peu
-//! * Add another unit vector if nothing new can be generated
-//! * Flip order of unit vectors in product until sorted
 //!
 //! # Even Higher Dimensions
 //!
