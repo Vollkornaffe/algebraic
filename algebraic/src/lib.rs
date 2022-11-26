@@ -65,16 +65,16 @@
 //! You can easily use [algebraic-gen](https://crates.io/crates/algebraic-gen) directly to go as
 //! high as you need. Be aware of the exponential increase of size, though.
 //!
-use algebraic_gen::generate_geometric_product;
-use std::ops::{Add, Mul, Sub};
 
-generate_geometric_product!(0);
-generate_geometric_product!(1);
-generate_geometric_product!(2);
-generate_geometric_product!(3);
-generate_geometric_product!(4);
-generate_geometric_product!(5);
-generate_geometric_product!(6);
+pub mod multi_vector;
+pub use multi_vector::MultiVector;
+pub use multi_vector::MultiVector0;
+pub use multi_vector::MultiVector1;
+pub use multi_vector::MultiVector2;
+pub use multi_vector::MultiVector3;
+pub use multi_vector::MultiVector4;
+pub use multi_vector::MultiVector5;
+pub use multi_vector::MultiVector6;
 
 #[cfg(test)]
 mod unit_tests;

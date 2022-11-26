@@ -118,8 +118,10 @@ pub fn generate_geometric_product(input: TokenStream) -> TokenStream {
     let gen = quote! {
         #[doc = #documentation]
         #[doc = #basis]
-        pub fn #function_ident<T>(a: &[T; #array_length], b: &[T; #array_length]) -> [T; #array_length]
+        pub fn #function_ident<A, B, T>(a: &A, b: &B) -> [T; #array_length]
         where
+            A: Index<usize, Output = T>,
+            B: Index<usize, Output = T>,
             T: Copy + Mul<T, Output = T> + Add<T, Output = T> + Sub<T, Output = T>,
         {
             #product
