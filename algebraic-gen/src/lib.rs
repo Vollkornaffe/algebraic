@@ -54,9 +54,9 @@
 //! there exist objects of different *degrees* from zero to `D` (inclusive).
 //! Objects of degree zero are scalars, objects of degree one are vectors, and
 //! objects of degree two, three, etc. are bivectors, trivectors, et cetera.
-//! These higher degree objects are created by wedge product of vectors. Combining all
-//! vectors via wedge product results a *pseudoscalar* of degree `D`. Objects of
-//! any degree can be scaled and added to form *multivectors*.
+//! These higher degree objects are created by wedge product of vectors.
+//! Combining all vectors via wedge product results a *pseudoscalar* of degree
+//! `D`. Objects of any degree can be scaled and added to form *multivectors*.
 //!
 //! Importantly for this crate, any multivector can be represented uniquely as a
 //! linear combination of elements of a chosen *base* with `2^D` different
@@ -81,12 +81,12 @@
 //! \'sledgehammer\' proc macro approach. The generation is not performant, but
 //! we're talking build time.
 //!
-//! Definitely inspired by [All Hail Geometric
-//! Algebra!](https://crypto.stanford.edu/~blynn/haskell/ga.html)
+//! The generation logic is inspired by [All Hail Geometric
+//! Algebra!](https://crypto.stanford.edu/~blynn/haskell/ga.html).
 //!
 //! Brief description of the how the macro works:
 //! * Generates elements (base)
-//!   * Product is simple concatination here
+//!   * Product is simple concatenation here
 //!   * Canonization with Bubblesort & a kind of duplication elimination
 //! * Generates product sums
 //!   * Expand terms
@@ -95,7 +95,7 @@
 //! * A bit of formatting
 //!
 //! More details in the source code:
-//! [algebra_generation.rs](https://github.com/Vollkornaffe/algebraic/blob/main/algebraic-gen/src/algebra_generation.rs).
+//! [`algebra_generation.rs`](../src/algebraic_gen/algebra_generation.rs.html).
 mod algebra_generation;
 use algebra_generation::{generate_elements, generate_product_sums};
 use core::str::FromStr;
