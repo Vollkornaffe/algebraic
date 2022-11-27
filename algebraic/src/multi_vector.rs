@@ -1,3 +1,5 @@
+//! TODO
+
 pub mod algebra_dimension_0;
 pub use algebra_dimension_0::MultiVector0;
 
@@ -26,13 +28,15 @@ use std::{
     ops::{Add, Div, IndexMut, Mul, Sub},
 };
 
-/// Implemented by the multi vectors of the geometric algebras of different dimensions.
+/// Implemented by the multi vectors of the geometric algebras of different
+/// dimensions.
 ///
-/// The `Add`, `Sub`, `Mul<T>`, and `Div<T>` implementations are component-wise.
-/// `Mul<Self>` (with another MultiVector) is the geometric product.
+/// The [`Add`], [`Sub`], [`Mul<T>`], and [`Div<T>`] implementations are
+/// component-wise. `Mul<Self>` (with another MultiVector) is the geometric
+/// product.
 ///
-/// All implementations are just light wrappers around arrays of size `NUMBER_OF_OBJECTS` aka.
-/// `2^ALGEBRA_DIMENSION`.
+/// All implementations are just light wrappers around arrays of size
+/// `NUMBER_OF_OBJECTS` aka. `2^ALGEBRA_DIMENSION`.
 pub trait MultiVector<T>:
     Copy
     + Default
@@ -42,12 +46,15 @@ pub trait MultiVector<T>:
     + AsRef<[T]>
     + AsMut<[T]>
     + BorrowMut<[T]>
-    + Add<Self, Output = Self>
-    + Sub<Self, Output = Self>
-    + Mul<Self, Output = Self>
+    + Add<Output = Self>
+    + Sub<Output = Self>
+    + Mul<Output = Self>
     + Mul<T, Output = Self>
     + Div<T, Output = Self>
 {
+    /// FIXME: Document.
     const ALGEBRA_DIMENSION: usize;
+
+    /// FIXME: Document.
     const NUMBER_OF_OBJECTS: usize = 1 << Self::ALGEBRA_DIMENSION;
 }
