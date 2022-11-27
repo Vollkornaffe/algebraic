@@ -26,6 +26,13 @@ use std::{
     ops::{Add, Div, IndexMut, Mul, Sub},
 };
 
+/// Implemented by the multi vectors of the geometric algebras of different dimensions.
+///
+/// The `Add`, `Sub`, `Mul<T>`, and `Div<T>` implementations are component-wise.
+/// `Mul<Self>` (with another MultiVector) is the geometric product.
+///
+/// All implementations are just light wrappers around arrays of size `NUMBER_OF_OBJECTS` aka.
+/// `2^ALGEBRA_DIMENSION`.
 pub trait MultiVector<T>:
     Copy
     + Default
