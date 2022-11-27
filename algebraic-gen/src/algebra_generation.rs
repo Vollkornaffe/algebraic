@@ -70,7 +70,8 @@ pub fn generate_elements(dimension: usize) -> Vec<Vec<usize>> {
 }
 
 // Generates the geometric product
-// basically, multiply out and see to which element is contributed (and under which sign)
+// basically, multiply out and see to which element is contributed (and under
+// which sign)
 pub fn generate_product_sums(elements: &[Vec<usize>]) -> Vec<Vec<(bool, usize, usize)>> {
     let mut sums: Vec<Vec<(bool, usize, usize)>> = vec![vec![]; elements.len()];
     for (a_i, a) in elements.iter().enumerate() {
