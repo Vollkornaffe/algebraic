@@ -100,8 +100,8 @@ mod algebra_generation;
 use algebra_generation::{generate_elements, generate_product_sums};
 use core::str::FromStr;
 use proc_macro::TokenStream;
-use quote::{format_ident, quote};
-use syn::{parse_macro_input, Error, ExprArray};
+use quote::quote;
+use syn::{parse::Parse, parse_macro_input, Error, ExprArray};
 
 fn generate_product_string(product_sums: &[Vec<(bool, usize, usize)>]) -> String {
     format!(
@@ -155,16 +155,37 @@ fn generate_base_string(elements: &[Vec<usize>]) -> String {
     )
 }
 
+struct MacroArgs {
+    function_ident: syn::Ident,
+    _comma: syn::token::Comma,
+    dimension: syn::LitInt,
+}
+
+impl Parse for MacroArgs {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        Ok(MacroArgs {
+            function_ident: input.parse()?,
+            _comma: input.parse()?,
+            dimension: input.parse()?,
+        })
+    }
+}
+
 /// The one macro exported by this crate
 #[proc_macro]
 pub fn generate_geometric_product(input: TokenStream) -> TokenStream {
-    let lit = parse_macro_input!(input as syn::LitInt);
-    let dimension = match lit.base10_parse::<usize>() {
+    let args = parse_macro_input!(input as MacroArgs);
+
+    let dimension = match args.dimension.base10_parse::<usize>() {
         Ok(dimension) => dimension,
-        Err(err) => return Error::new_spanned(lit, err).to_compile_error().into(),
+        Err(err) => {
+            return Error::new_spanned(args.dimension, err)
+                .to_compile_error()
+                .into()
+        }
     };
 
-    let function_ident = format_ident!("geometric_product_{}", dimension);
+    let function_ident = args.function_ident;
 
     let elements = generate_elements(dimension);
     let product_sums = generate_product_sums(&elements);
@@ -191,9 +212,12 @@ pub fn generate_geometric_product(input: TokenStream) -> TokenStream {
         #[doc = #basis]
         pub fn #function_ident<A, B, T>(a: &A, b: &B) -> [T; #array_length]
         where
-            A: Index<usize, Output = T>,
-            B: Index<usize, Output = T>,
-            T: Copy + Mul<Output = T> + Add<Output = T> + Sub<Output = T>,
+            A: ::core::ops::Index<usize, Output = T>,
+            B: ::core::ops::Index<usize, Output = T>,
+            T: Copy +
+                ::core::ops::Mul<Output = T> +
+                ::core::ops::Add<Output = T> +
+                ::core::ops::Sub<Output = T>,
         {
             #product
         }

@@ -6,7 +6,7 @@ use std::{
 };
 
 use algebraic_gen::generate_geometric_product;
-generate_geometric_product!(4);
+generate_geometric_product!(product, 4);
 
 use super::MultiVector;
 
@@ -113,7 +113,7 @@ impl<T: Copy + Add<T, Output = T> + Sub<T, Output = T> + Mul<T, Output = T>> Mul
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Self(geometric_product_4(&self, &rhs))
+        Self(product(&self, &rhs))
     }
 }
 
