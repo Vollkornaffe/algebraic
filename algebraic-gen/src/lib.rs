@@ -101,7 +101,7 @@ use algebra_generation::{generate_elements, generate_product_sums};
 use core::str::FromStr;
 use proc_macro::TokenStream;
 use quote::{format_ident, quote};
-use syn::ExprArray;
+use syn::{parse_macro_input, Error, ExprArray};
 
 fn generate_product_string(product_sums: &[Vec<(bool, usize, usize)>]) -> String {
     format!(
@@ -158,8 +158,11 @@ fn generate_base_string(elements: &[Vec<usize>]) -> String {
 /// The one macro exported by this crate
 #[proc_macro]
 pub fn generate_geometric_product(input: TokenStream) -> TokenStream {
-    let lit: syn::LitInt = syn::parse(input).unwrap();
-    let dimension = lit.base10_parse::<usize>().unwrap();
+    let lit = parse_macro_input!(input as syn::LitInt);
+    let dimension = match lit.base10_parse::<usize>() {
+        Ok(dimension) => dimension,
+        Err(err) => return Error::new_spanned(lit, err).to_compile_error().into(),
+    };
 
     let function_ident = format_ident!("geometric_product_{}", dimension);
 
