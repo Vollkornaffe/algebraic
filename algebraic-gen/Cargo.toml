@@ -2,7 +2,6 @@
 name = "algebraic-gen"
 version = "0.1.0"
 edition = "2021"
-license = "MIT"
 license-file = "LICENSE"
 keywords = ["geometric-algebra", "math", "clifford", "algebra", "hyper-complex"]
 repository = "https://github.com/Vollkornaffe/algebraic"
@@ -12,7 +11,7 @@ publish = ["algebraic-gen"]
 authors = ["Vollkornaffe <vollkornaffe@gmail.com>"]
 
 [lib]
-path = "./lib.rs"
+path = "./src/lib.rs"
 proc-macro = true
 
 [dependencies]

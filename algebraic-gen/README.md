@@ -109,5 +109,3 @@ Brief description of the how the macro works:
 
 More details in the source code:
 [`algebra_generation.rs`](../src/algebraic_gen/algebra_generation.rs.html).
-
-License: MIT
