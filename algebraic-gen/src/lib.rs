@@ -1,21 +1,33 @@
 //! Generates performant geometric products for any dimension of space.
 //!
-//! The crate provides a macro [`generate_geometric_product!`]. Given a
-//! nonnegative integer literal `D`, the macro generates a function that
-//! computes the geometric product of two coefficient representations of
+//! The crate provides a macro [`generate_geometric_product!`]. Given a function
+//! identifier and a nonnegative integer literal, the macro generates a function
+//! that computes the geometric product of two coefficient representations of
 //! multivectors.
 //!
-//! For example, `generate_geometric_product!(3)` generates a function with the
-//! following signature:
+//! For example, `generate_geometric_product!(my_product, 3)` generates the
+//! following function:
 //!
-//! ```ignore
-//! pub fn geometric_product_3<A, B, T>(a: &A, b: &B) -> [T; 8]
+//! ```
+//! pub fn my_product<A, B, T>(a: &A, b: &B) -> [T; 8]
 //! where
-//!     A: Index<usize, Output = T>,
-//!     B: Index<usize, Output = T>,
-//!     T: Copy + Mul<Output = T> + Add<Output = T> + Sub<Output = T>,
+//!     A: ::core::ops::Index<usize, Output = T>,
+//!     B: ::core::ops::Index<usize, Output = T>,
+//!     T: Copy +
+//!         ::core::ops::Mul<Output = T> +
+//!         ::core::ops::Add<Output = T> +
+//!         ::core::ops::Sub<Output = T>,
 //! {
-//!     // ...
+//!     [
+//!         a[0] * b[0] - a[1] * b[1] - a[2] * b[2] - a[3] * b[3] - a[4] * b[4] - a[5] * b[5] - a[6] * b[6] + a[7] * b[7],
+//!         a[0] * b[1] + a[1] * b[0] + a[2] * b[3] - a[3] * b[2] + a[4] * b[5] - a[5] * b[4] - a[6] * b[7] - a[7] * b[6],
+//!         a[0] * b[2] - a[1] * b[3] + a[2] * b[0] + a[3] * b[1] + a[4] * b[6] + a[5] * b[7] - a[6] * b[4] + a[7] * b[5],
+//!         a[0] * b[3] + a[1] * b[2] - a[2] * b[1] + a[3] * b[0] - a[4] * b[7] + a[5] * b[6] - a[6] * b[5] - a[7] * b[4],
+//!         a[0] * b[4] - a[1] * b[5] - a[2] * b[6] - a[3] * b[7] + a[4] * b[0] + a[5] * b[1] + a[6] * b[2] - a[7] * b[3],
+//!         a[0] * b[5] + a[1] * b[4] + a[2] * b[7] - a[3] * b[6] - a[4] * b[1] + a[5] * b[0] + a[6] * b[3] + a[7] * b[2],
+//!         a[0] * b[6] - a[1] * b[7] + a[2] * b[4] + a[3] * b[5] - a[4] * b[2] - a[5] * b[3] + a[6] * b[0] - a[7] * b[1],
+//!         a[0] * b[7] + a[1] * b[6] - a[2] * b[5] + a[3] * b[4] + a[4] * b[3] - a[5] * b[2] + a[6] * b[1] + a[7] * b[0],
+//!     ]
 //! }
 //! ```
 //!
@@ -30,16 +42,15 @@
 //! (Check it out with `cargo expand`.)
 //!
 //! ```rust
-//! use std::ops::{Add, Index, Mul, Sub};
 //! use algebraic_gen::generate_geometric_product;
 //!
-//! generate_geometric_product!(3);
+//! generate_geometric_product!(my_product, 3);
 //!
 //! fn main() {
 //!   let a: [f64; 8] = [1., 2., 3., 4., 5., 6., 7., 8.];
 //!   let b: [f64; 8] = [8., 7., 6., 5., 4., 3., 2., 1.];
 //!
-//!   let c = geometric_product_3(&a, &b);
+//!   let c = my_product(&a, &b);
 //!
 //!   println!("The geometric product of {:?} and {:?} is {:?}", a, b, c);
 //!
@@ -49,14 +60,14 @@
 //!
 //! # Geometric Algebra
 //!
-//! A [geometric algebra](https://en.wikipedia.org/wiki/Geometric_algebra) is
-//! defined with respect to a given dimension `D` of space. In such an algebra,
-//! there exist objects of different *degrees* from zero to `D` (inclusive).
-//! Objects of degree zero are scalars, objects of degree one are vectors, and
-//! objects of degree two, three, etc. are bivectors, trivectors, et cetera.
-//! These higher degree objects are created by wedge product of vectors.
-//! Combining all vectors via wedge product results a *pseudoscalar* of degree
-//! `D`. Objects of any degree can be scaled and added to form *multivectors*.
+//! A [geometric algebra](https://en.wikipedia.org/wiki/Geometric_algebra) is defined with respect
+//! to a given dimension `D` of space. In such an algebra, there exist objects
+//! of different *degrees* from zero to `D` (inclusive). Objects of degree zero
+//! are scalars, objects of degree one are vectors, and objects of degree two,
+//! three, etc. are bivectors, trivectors, et cetera. These higher degree
+//! objects are created by wedge product of vectors. Combining all vectors via
+//! wedge product results a *pseudoscalar* of degree `D`. Objects of any degree
+//! can be scaled and added to form *multivectors*.
 //!
 //! Importantly for this crate, any multivector can be represented uniquely as a
 //! linear combination of elements of a chosen *base* with `2^D` different
@@ -69,11 +80,11 @@
 //! The macro attaches documentation of the choice of base to the generated
 //! function. Sticking to 3D for an example, the choice of base in this crate
 //! is: one scalar (`S`), three vectors (`X`, `Y`, `Z`), three bivectors (`X∧Y`,
-//! `X∧Z`, `Y∧X`), and one pseudoscalar (`X∧Y∧Z`). `geometric_product_3`
-//! interprets the 8-dimensional coefficient arrays as `[S, X, Y, X∧Y, Z, X∧Z,
-//! Y∧Z, X∧Y∧Z]`. In the documentation attached to the respective generated
-//! product functions, this is represented as `[[], [0], [1], [0,1], [2], [0,2],
-//! [1,2], [0,1,2]]`.
+//! `X∧Z`, `Y∧X`), and one pseudoscalar (`X∧Y∧Z`). The generated
+//! product interprets the 8-dimensional coefficient arrays as `[S, X, Y, X∧Y,
+//! Z, X∧Z, Y∧Z, X∧Y∧Z]`. In the documentation attached to the respective
+//! generated product functions, this is represented as `[[], [0], [1], [0,1],
+//! [2], [0,2], [1,2], [0,1,2]]`.
 //!
 //! # On the Generation
 //!
@@ -81,8 +92,8 @@
 //! \'sledgehammer\' proc macro approach. The generation is not performant, but
 //! we're talking build time.
 //!
-//! The generation logic is inspired by [All Hail Geometric
-//! Algebra!](https://crypto.stanford.edu/~blynn/haskell/ga.html).
+//! The generation logic is inspired by
+//! [All Hail Geometric Algebra!](https://crypto.stanford.edu/~blynn/haskell/ga.html).
 //!
 //! Brief description of the how the macro works:
 //! * Generates elements (base)
@@ -96,6 +107,7 @@
 //!
 //! More details in the source code:
 //! [`algebra_generation.rs`](../src/algebraic_gen/algebra_generation.rs.html).
+
 mod algebra_generation;
 use algebra_generation::{generate_elements, generate_product_sums};
 use core::str::FromStr;
