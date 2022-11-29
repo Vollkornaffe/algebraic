@@ -2,10 +2,17 @@
 name = "algebraic-gen"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license = "MIT"
+license-file = "LICENSE"
+keywords = ["geometric-algebra", "math", "clifford", "algebra", "hyper-complex"]
+repository = "https://github.com/Vollkornaffe/algebraic"
+description = "Procedural Macro for Geometric Products of Any Dimension"
+categories = ["mathematics" ,"no-std"]
+publish = ["algebraic-gen"]
+authors = ["Vollkornaffe <vollkornaffe@gmail.com>"]
 
 [lib]
+path = "./lib.rs"
 proc-macro = true
 
 [dependencies]
