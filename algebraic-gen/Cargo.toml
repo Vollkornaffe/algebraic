@@ -7,7 +7,6 @@ keywords = ["geometric-algebra", "math", "clifford", "algebra", "hyper-complex"]
 repository = "https://github.com/Vollkornaffe/algebraic"
 description = "Procedural Macro for Geometric Products of Any Dimension"
 categories = ["mathematics" ,"no-std"]
-publish = ["algebraic-gen"]
 authors = ["Vollkornaffe <vollkornaffe@gmail.com>"]
 
 [lib]
