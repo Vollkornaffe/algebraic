@@ -1,4 +1,8 @@
-//! TODO
+//! This module contains the [MultiVector] trait and it's implementations.
+//!
+//! Also note the [geometric_product_0], .., [geometric_product_6]. They are used for the [Mul]
+//! implementation of the respective [MultiVector0], .., [MultiVector6]. The attached documentaiton
+//! also shows which index corresponds to which base ceofficient.
 use algebraic_gen::generate_geometric_product;
 use std::{
     borrow::{Borrow, BorrowMut},
@@ -7,24 +11,30 @@ use std::{
     ops::{Add, Div, Index, IndexMut, Mul, Sub},
 };
 
-/// Implemented by the multi vectors of the geometric algebras of different
-/// dimensions.
+/// Generalization of multi vectors of geometric algebras of different dimensions.
+/// (Currently `0` to `6` dimensions)
 ///
-/// The [`Add`], [`Sub`], [`Mul<T>`], and [`Div<T>`] implementations are
-/// component-wise. `Mul<Self>` (with another MultiVector) is the geometric
-/// product.
+/// All implementations are just light wrappers around arrays of size `BASE_SIZE`. The
+/// implementations for [Copy], [Debug], [IntoIterator], [IndexMut], [AsRef], [AsMut], and
+/// [BorrowMut] are all 'just forwarded' from the underlying array.
+/// ([Default] isn't implemented for arrays larger than 32, using `[T::default(); BASE_SIZE]`
+/// instead.)
 ///
-/// All implementations are just light wrappers around arrays of size
-/// `NUMBER_OF_OBJECTS` aka. `2^ALGEBRA_DIMENSION`.
+/// [Add] and [Sub] are per-coefficient, while [Mul] with another instance calls the function
+/// generated with [generate_geometric_product]. For convinience and performance, [Mul] (and
+/// [Div]) have special implementations for scalars.
 pub trait MultiVector<T>:
+    // forwarded from array
     Copy
-    + Default
     + Debug
     + IntoIterator<Item = T>
     + IndexMut<usize, Output = T>
     + AsRef<[T]>
     + AsMut<[T]>
     + BorrowMut<[T]>
+
+    // own implementation
+    + Default
     + Add<Output = Self>
     + Sub<Output = Self>
     + Mul<Output = Self>
@@ -32,7 +42,7 @@ pub trait MultiVector<T>:
     + Div<T, Output = Self>
     + private::Sealed
 {
-    /// FIXME: Document.
+    /// The dimension of the geometric algebra
     const ALGEBRA_DIMENSION: usize;
 
     /// The size of the base: `2^ALGEBRA_DIMENSION`
