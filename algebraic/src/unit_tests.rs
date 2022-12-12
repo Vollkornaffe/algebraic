@@ -24,7 +24,7 @@ fn random_vector<T: MultiVector<f64>>(rng: &mut ChaCha8Rng) -> T {
 
 fn random_multi_vector<T: MultiVector<f64>>(rng: &mut ChaCha8Rng) -> T {
     let mut mv = T::default();
-    for i in 0..T::NUMBER_OF_OBJECTS {
+    for i in 0..T::BASE_SIZE {
         mv[i] = random_float(rng);
     }
     mv
@@ -173,7 +173,7 @@ mod tests {
             / factorial(T::ALGEBRA_DIMENSION) as f64;
 
         let mut reference = T::default();
-        reference[T::NUMBER_OF_OBJECTS - 1] = 1.0;
+        reference[T::BASE_SIZE - 1] = 1.0;
 
         assert!(approx(pseudoscalar, reference));
     }
