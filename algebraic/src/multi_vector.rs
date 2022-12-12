@@ -30,6 +30,7 @@ pub trait MultiVector<T>:
     + Mul<Output = Self>
     + Mul<T, Output = Self>
     + Div<T, Output = Self>
+    + private::Sealed
 {
     /// FIXME: Document.
     const ALGEBRA_DIMENSION: usize;
@@ -364,3 +365,14 @@ generate_multivector_boilerplate!(
     62,
     63
 );
+
+mod private {
+    pub trait Sealed {}
+    impl<T> Sealed for super::MultiVector0<T> {}
+    impl<T> Sealed for super::MultiVector1<T> {}
+    impl<T> Sealed for super::MultiVector2<T> {}
+    impl<T> Sealed for super::MultiVector3<T> {}
+    impl<T> Sealed for super::MultiVector4<T> {}
+    impl<T> Sealed for super::MultiVector5<T> {}
+    impl<T> Sealed for super::MultiVector6<T> {}
+}
