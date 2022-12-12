@@ -108,4 +108,4 @@ Brief description of the how the macro works:
 * A bit of formatting
 
 More details in the source code:
-[`algebra_generation.rs`](../src/algebraic_gen/algebra_generation.rs.html).
+[`algebra_generation.rs`](https://github.com/Vollkornaffe/algebraic/blob/main/algebraic-gen/src/algebra_generation.rs)
